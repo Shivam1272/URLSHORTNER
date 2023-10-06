@@ -11,10 +11,39 @@ const path = require("path");
 require("dotenv").config();
 
 // model Import
-const User = require("./models/user");
-const Url = require("./models/shortUrl");
+// const User = require("./models/user");
+// const Url = require("./models/shortUrl");
 
 const app = express();
+
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+});
+
+const User = mongoose.model("User", userSchema);
+
+const shortUrlSchema = new mongoose.Schema({
+  full: {
+    type: String,
+    required: true,
+  },
+  short: {
+    type: String,
+    required: true,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  clicks: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+});
+
+const Url = mongoose.model("Url", shortUrlSchema);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
@@ -98,7 +127,6 @@ app.get("/register", (req, res) => {
 // Registration POST route
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
-
   // Check if the user already exists
   const existingUser = await User.findOne({ username });
   if (existingUser) {
@@ -192,7 +220,6 @@ app.use(express.static("public"));
 
 // Authentication middleware to protect routes
 function isAuthenticated(req, res, next) {
-  // console.log(req);
   if (req.isAuthenticated()) {
     return next();
   }
