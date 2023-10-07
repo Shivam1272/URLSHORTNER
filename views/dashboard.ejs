@@ -7,9 +7,88 @@
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
+    <style>
+      body {
+        background-color: white;
+      }
+      .navbar {
+        background-color: black;
+      }
+      .navbar-dark .navbar-toggler-icon {
+        background-color: #fff;
+      }
+      .jumbotron {
+        background: url("your-background-image.jpg") no-repeat center center;
+        background-size: cover;
+        color: black;
+        text-align: center;
+        padding: 150px 0;
+        margin-bottom: 0;
+      }
+      .jumbotron h1 {
+        font-size: 48px;
+        margin-bottom: 20px;
+      }
+      .jumbotron p {
+        font-size: 24px;
+      }
+      .btn-get-started {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 30px;
+        font-size: 20px;
+        border-radius: 5px;
+        text-decoration: none;
+      }
+      .btn-get-started:hover {
+        background-color: #0056b3;
+      }
+      .features {
+        background-color: #fff;
+        padding: 50px 0;
+        text-align: center;
+      }
+      .feature-icon {
+        font-size: 36px;
+        margin-bottom: 20px;
+        color: #007bff;
+      }
+      .feature-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+      .feature-description {
+        font-size: 18px;
+        color: #666;
+      }
+      .limited-column {
+        max-width: 200px; /* Set a maximum width for the column */
+        overflow: hidden; /* Hide overflowing text */
+        white-space: nowrap; /* Prevent text from wrapping */
+        text-overflow: ellipsis; /* Display ellipsis (...) for overflowed text */
+      }
+      .truncate-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block; /* Ensures that the div takes full available width */
+      }
+      .truncate-text:hover {
+        white-space: normal; /* Show full text on hover */
+        overflow: visible;
+      }
+      .footer {
+        background-color: black;
+        color: #fff;
+        padding: 20px 0;
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark">
       <a class="navbar-brand" href="/">URL Shortener</a>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
@@ -53,25 +132,36 @@
         <table class="table table-striped table-responsive">
           <thead>
             <tr>
-              <th>Full URL</th>
-              <th>Short URL</th>
-              <th>Clicks</th>
+              <th class="col-9">Full URL</th>
+              <th class="col-2">Short URL</th>
+              <th class="col-1">Clicks</th>
             </tr>
           </thead>
           <tbody>
             <% urls.forEach(url => { %>
             <tr>
-              <td><a href="<%= url.full %>"><%= url.full %></a></td>
-              <td><a href="<%= url.short %>"><%= url.short %></a></td>
-              <td><%= url.clicks %></td>
+              <td class="col-9 limited-column">
+                <div class="truncate-text">
+                  <a href="<%= url.full %>" target="_blank"><%= url.full %></a>
+                </div>
+              </td>
+              <td class="col-2 limited-column">
+                <div class="truncate-text">
+                  <a href="<%= url.short %>" target="_blank"
+                    ><%= url.short %></a
+                  >
+                </div>
+              </td>
+              <td class="col-1"><%= url.clicks %></td>
             </tr>
             <% }) %>
           </tbody>
         </table>
       </div>
-
-      <!-- Add dashboard functionality here -->
     </div>
+    <footer class="footer">
+      <div class="container">&copy; 2023 URL Shortener</div>
+    </footer>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
