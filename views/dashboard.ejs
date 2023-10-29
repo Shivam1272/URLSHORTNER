@@ -116,7 +116,7 @@
               class="form-control col mr-2"
             />
             <input
-              placeholder="Custom Name"
+              placeholder="Custom Name upto 8 character"
               type="text"
               name="customName"
               id="customName"
@@ -127,6 +127,9 @@
           </form>
         </div>
       </div>
+      <% if (message != "") { %>
+      <div class="alert alert-danger" role="alert"><%= message %></div>
+      <% } %>
       <h2>Your Shortened URLs:</h2>
       <div class="table-container">
         <table class="table table-striped table-responsive">

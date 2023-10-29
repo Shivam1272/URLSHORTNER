@@ -10,10 +10,6 @@ const flash = require("connect-flash");
 const path = require("path");
 require("dotenv").config();
 
-// model Import
-// const User = require("./models/user");
-// const Url = require("./models/shortUrl");
-
 const app = express();
 
 const userSchema = new mongoose.Schema({
@@ -31,6 +27,7 @@ const shortUrlSchema = new mongoose.Schema({
   short: {
     type: String,
     required: true,
+    unique: true,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -77,13 +74,13 @@ passport.use(
       const user = await User.findOne({ username });
 
       if (!user) {
-        return done(null, false, { message: "Incorrect username." });
+        return done(null, false, { message: "Incorrect login Credential." });
       }
 
       const isValidPassword = await bcrypt.compare(password, user.password);
 
       if (!isValidPassword) {
-        return done(null, false, { message: "Incorrect password." });
+        return done(null, false, { message: "Incorrect login Credential." });
       }
 
       return done(null, user);
@@ -171,7 +168,6 @@ app.get("/logout", (req, res) => {
 
 // Short url
 app.post("/shorten", isAuthenticated, async (req, res) => {
-  // console.log(req);
   const { fullUrl, customName } = req.body;
   const isValidCustomName = /^[a-zA-Z0-9]{1,8}$/.test(customName);
 
@@ -182,12 +178,21 @@ app.post("/shorten", isAuthenticated, async (req, res) => {
     } else {
       shortUrl = shortid.generate();
     }
-    const url = new Url({ full: fullUrl, short: shortUrl, user: req.user._id });
-    await url.save();
+    const existingUrl = await Url.findOne({ short: shortUrl });
+    if (existingUrl) {
+      req.flash("error", "Short URL already in use please try something else.");
+    } else {
+      const url = new Url({
+        full: fullUrl,
+        short: shortUrl,
+        user: req.user._id,
+      });
+      await url.save();
+    }
     res.redirect("/dashboard");
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Server error");
+    console.log(error, error.message);
+    res.render("dashboard");
   }
 });
 
@@ -195,7 +200,11 @@ app.post("/shorten", isAuthenticated, async (req, res) => {
 app.get("/dashboard", isAuthenticated, async (req, res) => {
   try {
     const urls = await Url.find({ user: req.user._id });
-    res.render("dashboard", { user: req.user, urls });
+    res.render("dashboard", {
+      user: req.user,
+      urls,
+      message: req.flash("error"),
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }

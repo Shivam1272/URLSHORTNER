@@ -95,7 +95,7 @@
           >
             <div class="card-header">User Login</div>
             <div class="card-body">
-              <% if (message) { %>
+              <% if (message != "") { %>
               <div class="alert alert-danger" role="alert"><%= message %></div>
               <% } %>
               <form action="/login" method="POST">
